@@ -7,12 +7,13 @@ if ! command -v adb &> /dev/null; then
 fi
 
 # Create a base directory to store the images
-BASE_DIR="./Android_Pictures"
+BASE_DIR="$HOME/Pictures"
 mkdir -p "$BASE_DIR"
 
 # Start the ADB server
 adb start-server
 
+echo "Waiting for the Android device"
 # Wait for the device
 adb wait-for-device
 
@@ -28,18 +29,20 @@ for FILE in "${FILES[@]}"; do
     
     LC_TIME=fr_FR.UTF-8
 
-    YEAR_MONTH=$(LC_TIME=$LC_TIME date -r $MOD_TIME +%m)
+
+    YEAR=$(LC_TIME=$LC_TIME date -r $MOD_TIME +%Y)
+    MONTH=$(LC_TIME=$LC_TIME date -r $MOD_TIME +%m)
     MONTH_NAME=$(LC_TIME=$LC_TIME date -r $MOD_TIME +%B)
 
     MONTH_NAME=$(echo "$MONTH_NAME" | awk '{print toupper(substr($0,1,1)) tolower(substr($0,2))}')
 
-    FOLDER_NAME="$YEAR_MONTH $MONTH_NAME"
+    FOLDER_NAME="$YEAR/$MONTH $MONTH_NAME"
     
-    echo $FOLDER_NAME
     # Create a directory for the month if it doesn't exist
     DEST_DIR="$BASE_DIR/$FOLDER_NAME"
     mkdir -p "$DEST_DIR"
     
+    echo $DEST_DIR
     # Pull the file to the appropriate directory
     adb pull "$FILE" "$DEST_DIR/"
 done
