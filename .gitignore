@@ -1,0 +1,36 @@
+# Ignore all compiled shell scripts
+*.sh~
+
+# Ignore temporary files created by editors
+*~
+*.swp
+*.swo
+.DS_Store
+
+# Ignore log files
+*.log
+
+# Ignore backup files
+*.bak
+*.backup
+
+# Ignore environment files
+.env
+.env.*
+
+# Ignore node_modules (if using Node.js)
+node_modules/
+
+# Ignore system files
+Thumbs.db
+.idea/
+.vscode/
+
+# Ignore build and output directories
+build/
+dist/
+output/
+
+# Ignore any other specific files or directories
+Android_Pictures
+# /path/to/ignored-directory/
