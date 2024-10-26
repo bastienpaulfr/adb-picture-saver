@@ -12,10 +12,13 @@ VERBOSE=false
 # Initialize month parameter
 MONTH_PARAM=""
 
+WHATSAPP=false
+
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         -v|--verbose) VERBOSE=true ;;
+        -w|--whatsapp) WHATSAPP=true ;;
         -h|--help)
             echo "Usage: $0 [-v|--verbose] [MONTH]"
             echo "       MONTH is optional and must be a number between 01 and 12."
@@ -80,22 +83,24 @@ pull_images() {
         fi
         mkdir -p "$DEST_DIR"
 
-        $VERBOSE && echo "Pulling $FILE to $DEST_DIR"
+        FILE=$(echo $FILE | sed 's/\\ / /g')
+        $VERBOSE && echo "Pulling $FILE to $DEST_DIR/"
         # Pull the file to the appropriate directory
         adb pull "$FILE" "$DEST_DIR/"
     done
 }
 
-FILES=($(adb shell find /sdcard/DCIM/Camera -type f ! -name ".trashed*"))
 
 # Call the function to execute the image pulling and organizing
+FILES=($(adb shell find /sdcard/DCIM/Camera -type f ! -name ".trashed*"))
 pull_images "./" "${FILES[@]}"
 
-IFS=$'\n' FILES=($(adb shell find "/sdcard/Android/media/com.whatsapp/WhatsApp/Media/WhatsApp\ Images/Private" -type f ! -name ".trashed*" | sed 's/ /\\ /g'))
-pull_images "Whatsapp Bibiane" "${FILES[@]}"
 
-IFS=$'\n' FILES=($(adb shell find "/sdcard/Android/media/com.whatsapp/WhatsApp/Media/WhatsApp\ Video/Private" -type f ! -name ".trashed*" |  sed 's/ /\\ /g'))
-pull_images "Whatsapp Bibiane" "${FILES[@]}"
+$WHATSAPP && IFS=$'\n' FILES=($(adb shell find "/sdcard/Android/media/com.whatsapp/WhatsApp/Media/WhatsApp\ Images/Private" -type f ! -name ".trashed*" | sed 's/ /\\ /g'))
+$WHATSAPP && pull_images "Whatsapp Bibiane" "${FILES[@]}"
+
+$WHATSAPP && IFS=$'\n' FILES=($(adb shell find "/sdcard/Android/media/com.whatsapp/WhatsApp/Media/WhatsApp\ Video/Private" -type f ! -name ".trashed*" |  sed 's/ /\\ /g'))
+$WHATSAPP && pull_images "Whatsapp Bibiane" "${FILES[@]}"
 
 
 echo "All images have been transferred and organized by month."
